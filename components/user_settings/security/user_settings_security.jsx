@@ -47,6 +47,9 @@ export default class SecurityTab extends React.Component {
         // Whether or not sign-up with GitLab is enabled.
         enableSignUpWithGitLab: PropTypes.bool,
 
+        // Whether or not sign-up with Keycloak is enabled.
+        enableSignUpWithKeycloak: PropTypes.bool,
+
         // Whether or not sign-up with Google is enabled.
         enableSignUpWithGoogle: PropTypes.bool,
 
@@ -304,6 +307,20 @@ export default class SecurityTab extends React.Component {
                         </div>
                     </div>
                 );
+            } else if (this.props.user.auth_service === Constants.KEYCLOAK_SERVICE) {
+                inputs.push(
+                    <div
+                        key='oauthEmailInfo'
+                        className='form-group'
+                    >
+                        <div className='padding-bottom x2'>
+                            <FormattedMessage
+                                id='user.settings.security.passwordKeycloakCantUpdate'
+                                defaultMessage='Login occurs through Keycloak. Password cannot be updated.'
+                            />
+                        </div>
+                    </div>
+                );
             } else if (this.props.user.auth_service === Constants.LDAP_SERVICE) {
                 inputs.push(
                     <div
@@ -416,6 +433,13 @@ export default class SecurityTab extends React.Component {
                     defaultMessage='Login done through GitLab'
                 />
             );
+        } else if (this.props.user.auth_service === Constants.KEYCLOAK_SERVICE) {
+            describe = (
+                <FormattedMessage
+                    id='user.settings.security.loginKeycloak'
+                    defaultMessage='Login done through Keycloak'
+                />
+            );
         } else if (this.props.user.auth_service === Constants.LDAP_SERVICE) {
             describe = (
                 <FormattedMessage
@@ -468,6 +492,7 @@ export default class SecurityTab extends React.Component {
         if (this.props.activeSection === SECTION_SIGNIN) {
             let emailOption;
             let gitlabOption;
+            let keycloakOption;
             let googleOption;
             let office365Option;
             let ldapOption;
@@ -484,6 +509,22 @@ export default class SecurityTab extends React.Component {
                                 <FormattedMessage
                                     id='user.settings.security.switchGitlab'
                                     defaultMessage='Switch to using GitLab SSO'
+                                />
+                            </Link>
+                            <br/>
+                        </div>
+                    );
+                }
+                if (this.props.enableSignUpWithKeycloak) {
+                    keycloakOption = (
+                        <div className='padding-bottom x2'>
+                            <Link
+                                className='btn btn-primary'
+                                to={'/claim/email_to_oauth?email=' + encodeURIComponent(user.email) + '&old_type=' + user.auth_service + '&new_type=' + Constants.KEYCLOAK_SERVICE}
+                            >
+                                <FormattedMessage
+                                    id='user.settings.security.switchKeycloak'
+                                    defaultMessage='Switch to using Keycloak SSO'
                                 />
                             </Link>
                             <br/>
@@ -625,6 +666,13 @@ export default class SecurityTab extends React.Component {
                 <FormattedMessage
                     id='user.settings.security.gitlab'
                     defaultMessage='GitLab'
+                />
+            );
+        } else if (this.props.user.auth_service === Constants.KEYCLOAK_SERVICE) {
+            describe = (
+                <FormattedMessage
+                    id='user.settings.security.keycloak'
+                    defaultMessage='Keycloak'
                 />
             );
         } else if (this.props.user.auth_service === Constants.GOOGLE_SERVICE) {
@@ -804,6 +852,7 @@ export default class SecurityTab extends React.Component {
         const passwordSection = this.createPasswordSection();
 
         let numMethods = 0;
+        numMethods = this.props.enableSignUpWithKeycloak ? numMethods + 1 : numMethods;
         numMethods = this.props.enableSignUpWithGitLab ? numMethods + 1 : numMethods;
         numMethods = this.props.enableSignUpWithGoogle ? numMethods + 1 : numMethods;
         numMethods = this.props.enableSignUpWithOffice365 ? numMethods + 1 : numMethods;

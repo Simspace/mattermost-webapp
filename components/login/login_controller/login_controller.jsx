@@ -51,6 +51,7 @@ class LoginController extends React.Component {
         enableSignInWithUsername: PropTypes.bool.isRequired,
         enableSignUpWithEmail: PropTypes.bool.isRequired,
         enableSignUpWithGitLab: PropTypes.bool.isRequired,
+        enableSignUpWithKeycloak: PropTypes.bool.isRequired,
         enableSignUpWithGoogle: PropTypes.bool.isRequired,
         enableSignUpWithOffice365: PropTypes.bool.isRequired,
         experimentalPrimaryTeam: PropTypes.string,
@@ -413,6 +414,7 @@ class LoginController extends React.Component {
     checkSignUpEnabled = () => {
         return this.props.enableSignUpWithEmail ||
             this.props.enableSignUpWithGitLab ||
+            this.props.enableSignUpWithKeycloak ||
             this.props.enableSignUpWithOffice365 ||
             this.props.enableSignUpWithGoogle ||
             this.props.enableLdap ||
@@ -523,6 +525,7 @@ class LoginController extends React.Component {
 
         const ldapEnabled = this.state.ldapEnabled;
         const gitlabSigninEnabled = this.props.enableSignUpWithGitLab;
+        const keycloakSigninEnabled = this.props.enableSignUpWithKeycloak;
         const googleSigninEnabled = this.props.enableSignUpWithGoogle;
         const office365SigninEnabled = this.props.enableSignUpWithOffice365;
         const samlSigninEnabled = this.state.samlEnabled;
@@ -638,7 +641,7 @@ class LoginController extends React.Component {
             );
         }
 
-        if ((emailSigninEnabled || usernameSigninEnabled || ldapEnabled) && (gitlabSigninEnabled || googleSigninEnabled || samlSigninEnabled || office365SigninEnabled)) {
+        if ((emailSigninEnabled || usernameSigninEnabled || ldapEnabled) && (gitlabSigninEnabled || keycloakSigninEnabled || googleSigninEnabled || samlSigninEnabled || office365SigninEnabled)) {
             loginControls.push(
                 <div
                     key='divider'
@@ -680,6 +683,27 @@ class LoginController extends React.Component {
                 </a>
             );
         }
+
+        if (keycloakSigninEnabled) {
+            loginControls.push(
+                <a
+                    className='btn btn-custom-login keycloak'
+                    key='keycloak'
+                    href={Client4.getOAuthRoute() + '/keycloak/login' + this.props.location.search}
+                >
+                    <span>
+                        <span className='icon'/>
+                        <span>
+                            <FormattedMessage
+                                id='login.keycloak'
+                                defaultMessage='Keycloak'
+                            />
+                        </span>
+                    </span>
+                </a>
+            );
+        }
+
 
         if (googleSigninEnabled) {
             loginControls.push(

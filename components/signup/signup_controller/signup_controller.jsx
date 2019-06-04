@@ -25,6 +25,7 @@ export default class SignupController extends React.Component {
         noAccounts: PropTypes.bool.isRequired,
         enableSignUpWithEmail: PropTypes.bool.isRequired,
         enableSignUpWithGitLab: PropTypes.bool.isRequired,
+        enableSignUpWithKeycloak: PropTypes.bool.isRequired,
         enableSignUpWithGoogle: PropTypes.bool.isRequired,
         enableSignUpWithOffice365: PropTypes.bool.isRequired,
         enableLDAP: PropTypes.bool.isRequired,
@@ -192,6 +193,27 @@ export default class SignupController extends React.Component {
                 </a>
             );
         }
+
+        if (this.props.enableSignUpWithKeycloak) {
+            signupControls.push(
+                <a
+                    className='btn btn-custom-login btn--full keycloak'
+                    key='keycloak'
+                    href={Client4.getOAuthRoute() + '/keycloak/signup' + window.location.search}
+                >
+                    <span>
+                        <span className='icon'/>
+                        <span>
+                            <FormattedMessage
+                                id='signup.keycloak'
+                                defaultMessage='Keycloak Single Sign-On'
+                            />
+                        </span>
+                    </span>
+                </a>
+            );
+        }
+
 
         if (this.props.isLicensed && this.props.enableSignUpWithGoogle) {
             signupControls.push(

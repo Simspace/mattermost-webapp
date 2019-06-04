@@ -927,6 +927,109 @@ export default {
                     ],
                 },
             },
+            keycloak: {
+                url: 'keycloak',
+                title: t('admin.sidebar.keycloak'),
+                title_default: 'Keycloak',
+                isHidden: needsUtils.hasLicense,
+                schema: {
+                  id: 'KeycloakSettings',
+                  name: t('admin.authentication.keycloak'),
+                  name_default: 'Keycloak',
+                  settings: [
+                        {
+                            type: Constants.SettingsTypes.TYPE_BOOL,
+                            key: 'KeycloakSettings.Enable',
+                            label: t('admin.keycloak.enableTitle'),
+                            label_default: 'Enable authentication with Keycloak: ',
+                            help_text: t('admin.keycloak.enableDescription'),
+                            help_text_default: 'When true, Mattermost allows team creation and account signup using Keycloak OAuth.\n \n1. Log in to your Keycloak account and go to Profile Settings -> Applications.\n2. Enter Redirect URIs "<your-mattermost-url>/login/keycloak/complete" (example: http://localhost:8065/login/keycloak/complete) and "<your-mattermost-url>/signup/keycloak/complete".\n3. Then use "Application Secret Key" and "Application ID" fields from Keycloak to complete the options below.\n4. Complete the Endpoint URLs below.',
+                            help_text_markdown: true,
+                        },
+                        {
+                            type: Constants.SettingsTypes.TYPE_TEXT,
+                            key: 'KeycloakSettings.Id',
+                            label: t('admin.keycloak.clientIdTitle'),
+                            label_default: 'Application ID:',
+                            help_text: t('admin.keycloak.clientIdDescription'),
+                            help_text_default: 'Obtain this value via the instructions above for logging into Keycloak.',
+                            placeholder: t('admin.keycloak.clientIdExample'),
+                            placeholder_default: 'E.g.: "jcuS8PuvcpGhpgHhlcpT1Mx42pnqMxQY"',
+                            isDisabled: needsUtils.stateValueFalse('KeycloakSettings.Enable'),
+                        },
+                        {
+                            type: Constants.SettingsTypes.TYPE_TEXT,
+                            key: 'KeycloakSettings.Secret',
+                            label: t('admin.keycloak.clientSecretTitle'),
+                            label_default: 'Application Secret Key:',
+                            help_text: t('admin.keycloak.clientSecretDescription'),
+                            help_text_default: 'Obtain this value via the instructions above for logging into Keycloak.',
+                            placeholder: t('admin.keycloak.clientSecretExample'),
+                            placeholder_default: 'E.g.: "jcuS8PuvcpGhpgHhlcpT1Mx42pnqMxQY"',
+                            isDisabled: needsUtils.stateValueFalse('KeycloakSettings.Enable'),
+                        },
+                        {
+                            type: Constants.SettingsTypes.TYPE_TEXT,
+                            key: 'KeycloakSettings.Url',
+                            label: t('admin.keycloak.siteUrl'),
+                            label_default: 'Keycloak Site URL:',
+                            help_text: t('admin.keycloak.siteUrlDescription'),
+                            help_text_default: 'Enter the URL of your Keycloak instance, e.g. https://example.com:3000. If your Keycloak instance is not set up with SSL, start the URL with http:// instead of https://.',
+                            placeholder: t('admin.keycloak.siteUrlExample'),
+                            placeholder_default: 'E.g.: https://',
+                            isDisabled: needsUtils.stateValueFalse('KeycloakSettings.Enable'),
+                        },
+                        {
+                            type: Constants.SettingsTypes.TYPE_TEXT,
+                            key: 'KeycloakSettings.UserApiEndpoint',
+                            label: t('admin.keycloak.userTitle'),
+                            label_default: 'User API Endpoint:',
+                            dynamic_value: (value, config, state) => {
+                                if (config.KeycloakSettings.UserApiEndpoint && state['KeycloakSettings.Url'] === undefined) {
+                                   return config.KeycloakSettings.UserApiEndpoint;
+                                }
+                                if (state['KeycloakSettings.Url']) {
+                                    return state['KeycloakSettings.Url'].replace(/\/$/, '') + '/protocol/openid-connect/userinfo';
+                                }
+                                return '';
+                            },
+                            isDisabled: true,
+                        },
+                        {
+                            type: Constants.SettingsTypes.TYPE_TEXT,
+                            key: 'KeycloakSettings.AuthEndpoint',
+                            label: t('admin.keycloak.authTitle'),
+                            label_default: 'Auth Endpoint:',
+                            dynamic_value: (value, config, state) => {
+                                if (config.KeycloakSettings.AuthEndpoint && state['KeycloakSettings.Url'] === undefined) {
+                                   return config.KeycloakSettings.AuthEndpoint;
+                                }
+                                if (state['KeycloakSettings.Url']) {
+                                    return state['KeycloakSettings.Url'].replace(/\/$/, '') + '/protocol/openid-connect/auth';
+                                }
+                                return '';
+                            },
+                            isDisabled: true,
+                        },
+                        {
+                            type: Constants.SettingsTypes.TYPE_TEXT,
+                            key: 'KeycloakSettings.TokenEndpoint',
+                            label: t('admin.keycloak.tokenTitle'),
+                            label_default: 'Token Endpoint:',
+                            dynamic_value: (value, config, state) => {
+                                if (config.KeycloakSettings.TokenEndpoint && state['KeycloakSettings.Url'] === undefined) {
+                                   return config.KeycloakSettings.TokenEndpoint;
+                                }
+                                if (state['KeycloakSettings.Url']) {
+                                    return state['KeycloakSettings.Url'].replace(/\/$/, '') + '/protocol/openid-connect/token';
+                                }
+                                return '';
+                            },
+                            isDisabled: true,
+                        },
+                    ],
+                },
+            },
             gitlab: {
                 url: 'gitlab',
                 title: t('admin.sidebar.gitlab'),
